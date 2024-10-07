@@ -8,6 +8,8 @@ data class Product(
     val productID: Int,
     @SerializedName("company_name")
     val companyName: String,
+    @SerializedName("company_Img")
+    val companyImg: String,
     @SerializedName("product_category")
     val productCategory: String,
     @SerializedName("product_name")

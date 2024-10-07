@@ -3,6 +3,7 @@ package com.loc.forsales.presentation.detail.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -27,7 +28,14 @@ fun DetailedPrice(product: Product, modifier: Modifier = Modifier) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            CompanyLogo(companyName = product.companyName, modifier = Modifier.size(32.dp))
+            Row {
+
+
+                CompanyLogo(product.companyImg, modifier = Modifier.size(32.dp))
+
+                Spacer(modifier = modifier.size(8.dp))
+                Text(text = product.companyName,modifier.align(Alignment.CenterVertically))
+            }
 
             Text(
                 text = "${product.productPrice} ₾",
@@ -51,6 +59,7 @@ fun DetailedPricePreview() {
                 productName = "კუჭი ქათმის ქუალიკო 1 კგ",
                 productPrice = "7.95",
                 lastUpdated = "60",
+                companyImg = "",
                 ImgUrl = "https://imageproxy.wolt.com/menu/menu-images/5f6b69ba5d07dca217bd3620/2383c440-f7e4-11ee-8413-cec83d668e87_289623.jpg"
             )
         )

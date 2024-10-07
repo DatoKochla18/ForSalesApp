@@ -8,7 +8,7 @@ import javax.inject.Inject
 class SearchProducts @Inject constructor(
     private val productsRepository: ProductsRepository
 ) {
-    suspend  operator fun invoke(query:String): Flow<List<Product>> {
-        return productsRepository.searchProduct(query)
+    suspend  operator fun invoke(mainCategoryId: Int, page: Int, pageSize: Int,query:String): Flow<List<Product>> {
+        return productsRepository.searchProduct(mainCategoryId=mainCategoryId,page=page, pageSize = pageSize,query=query)
     }
 }

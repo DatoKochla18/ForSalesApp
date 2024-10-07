@@ -1,6 +1,7 @@
 package com.loc.forsales.presentation.Home
 
 import android.util.Log
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -31,15 +32,29 @@ class HomeViewModel @Inject constructor(
     val state: StateFlow<HomeState> = _state
 
     private var searchJob: Job? = null
+    private val _selectedProductIds = mutableStateOf<List<Int>>(emptyList())
+    val selectedProductIds: State<List<Int>> = _selectedProductIds
 
-    init {
-        getProducts()
+    private var currentPage = 1
+    private var currentPageForSearch = 1
+    private var isLastPage = false
+    private var isLoadingMore = false
+    private var currentCategoryId: Int = -1
+
+    fun loadProductsByCategory(categoryId: Int) {
+        if (categoryId != currentCategoryId) {
+            currentCategoryId = categoryId
+            currentPage = 1
+            isLastPage = false
+            isLoadingMore = false
+            getProducts(categoryId)
+        }
     }
 
-    private fun getProducts() {
+    private fun getProducts(categoryId: Int) {
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true)
-            getProductsUseCase()
+            getProductsUseCase(categoryId, currentPage, pageSize = 15)
                 .catch { e ->
                     _state.value = _state.value.copy(
                         isLoading = false,
@@ -47,30 +62,53 @@ class HomeViewModel @Inject constructor(
                     )
                 }
                 .collect { products ->
-                    val categories = products.map { it.productCategory }.distinct()
-                    _state.value = _state.value.copy(
-                        products = products,
-                        filteredProducts = filterProducts(products, _state.value.selectedCategory, _state.value.query),
-                        categories = listOf("All") + categories,
-                        isLoading = false,
-                        error = null
-                    )
+                    if (currentPage == 1) {
+                        _state.value = _state.value.copy(
+                            products = products,
+                            filteredProducts = products,
+                            isLoading = false,
+                            error = null
+                        )
+                    } else {
+                        _state.value = _state.value.copy(
+                            products = _state.value.products + products,
+                            filteredProducts = _state.value.filteredProducts + products,
+                            isLoading = false,
+                            error = null
+                        )
+                    }
+                    isLoadingMore = false
                 }
         }
     }
 
-    fun updateQuery(query: String) {
-        _state.value = _state.value.copy(query = query)
-        searchProducts(query)
+    fun loadMoreProducts() {
+        if (!isLoadingMore && !isLastPage) {
+            isLoadingMore = true
+            if (state.value.query.isEmpty()) {
+                currentPage += 1
+                getProducts(currentCategoryId)
+            } else {
+                currentPageForSearch += 1
+                searchProducts(state.value.query, currentCategoryId)
+            }
+        }
     }
 
-    fun searchProducts(query: String) {
+
+
+    fun updateQuery(query: String,categoryId: Int) {
+        _state.value = _state.value.copy(query = query)
+        searchProducts(query=query,categoryId=categoryId)
+    }
+
+    fun searchProducts(query: String,categoryId:Int) {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
             delay(300)
             _state.value = _state.value.copy(isLoading = true)
 
-            searchProductsUseCase(query)
+            searchProductsUseCase(query=query, mainCategoryId = categoryId, pageSize = 15, page = currentPageForSearch)
                 .onEach { searchResults ->
                     val filteredProducts = filterProducts(searchResults, _state.value.selectedCategory, query)
                     _state.value = _state.value.copy(
@@ -88,7 +126,6 @@ class HomeViewModel @Inject constructor(
                 .launchIn(this)
         }
     }
-
 
     fun filterByCategory(category: String) {
         viewModelScope.launch {
@@ -108,5 +145,19 @@ class HomeViewModel @Inject constructor(
                     (query.isEmpty() || product.productName?.contains(query, ignoreCase = true) == true)
         }
     }
+
+    fun toggleProductSelection(productId: Int) {
+        _selectedProductIds.value = if (_selectedProductIds.value.contains(productId)) {
+            _selectedProductIds.value - productId
+        } else {
+            _selectedProductIds.value + productId
+        }
+    }
+
+    fun fetchCartIds(): String {
+        return selectedProductIds.value.joinToString(",")
+    }
+
 }
+
 

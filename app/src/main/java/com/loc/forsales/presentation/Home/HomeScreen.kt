@@ -1,15 +1,20 @@
 package com.loc.forsales.presentation.Home
 
+import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,22 +35,39 @@ import com.loc.forsales.ui.theme.ForSalesTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = hiltViewModel(),
-    navigateToDetails: (Product) -> Unit
+    categoryId: Int,
+    navigateToDetails: (Product) -> Unit,
+    navigateToCart: (String) -> Unit,
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        SearchBox(
-            query = state.query,
-            onQueryChanged = { query ->
-                viewModel.updateQuery(query)
-            },
-            onSearch = {
-                viewModel.searchProducts(state.query)
-            }
-        )
+    // Use LaunchedEffect to react to the categoryId parameter
+    LaunchedEffect(categoryId) {
+        viewModel.loadProductsByCategory(categoryId)
+    }
 
+    Column(modifier = Modifier.fillMaxSize()) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Button(
+                onClick = {
+                    val cartIds = viewModel.fetchCartIds()
+                    navigateToCart(cartIds)
+                }
+            ) {
+                Text("Go to Cart")
+            }
+
+            SearchBox(
+                query = state.query,
+                onQueryChanged = { query ->
+                    viewModel.updateQuery(query,categoryId)
+                },
+                onSearch = {
+                    viewModel.searchProducts(state.query,categoryId)
+                }
+            )
+        }
         CategoryFilter(
             categories = state.categories,
             selectedCategory = state.selectedCategory,
@@ -75,7 +97,11 @@ fun HomeScreen(
             else -> {
                 ProductList(
                     products = state.filteredProducts,
-                    onClick = navigateToDetails
+                    onClick = navigateToDetails,
+                    onSelectionChange = { productId ->
+                        viewModel.toggleProductSelection(productId)
+                    },
+                    loadMore = { viewModel.loadMoreProducts() }
                 )
             }
         }
@@ -83,11 +109,10 @@ fun HomeScreen(
 }
 
 
-
 @Composable
 @Preview
 fun HomeScreenPreview() {
     ForSalesTheme {
-        HomeScreen(navigateToDetails = {})
+        HomeScreen(navigateToDetails = {}, navigateToCart = {}, categoryId = 2)
     }
 }

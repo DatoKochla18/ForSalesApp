@@ -1,30 +1,22 @@
-package com.loc.forsales.presentation.cart
+package com.loc.forsales.presentation.cart.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.loc.forsales.domain.model.Product
-import com.loc.forsales.presentation.Home.components.CompanyLogo
 
 @Composable
 fun ProductsCartTable(productsCart: List<List<Product>>) {
+    Log.d("ProductsCartTable", "Displaying products: $productsCart")
+
     Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
 
         // Table Header with "Best Way" and Company Names
@@ -67,51 +59,8 @@ fun ProductsCartTable(productsCart: List<List<Product>>) {
                 productPrices = productsCart.map { list ->
                     list.find { it.productName == product.productName }?.productPrice ?: "-"
                 },
-                bestWayCompany = productsCart[0].find { it.productName == product.productName }?.companyName
+                bestWayCompany = productsCart[0].find { it.productName == product.productName }?.companyImg
             )
-        }
-    }
-}
-@Composable
-fun ProductRow(productName: String, productPrices: List<String>, bestWayCompany: String?) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        // Product Name Column
-        Text(
-            text = productName,
-            modifier = Modifier.weight(2f),
-        )
-
-        // Price Columns (for Best Way and other companies)
-        productPrices.forEachIndexed { index, price ->
-            if (index == 0) { // Best Way column
-                Row(
-                    modifier = Modifier.weight(1f),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    // Display the price
-                    Text(
-                        text = price,
-                        modifier = Modifier.weight(1f)
-                    )
-
-                    // Spacer between price and logo
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    // Display the company logo at the end
-                    if (bestWayCompany != null) {
-                        CompanyLogo(companyName = bestWayCompany, modifier = Modifier.size(24.dp))
-                    }
-                }
-            } else {
-                // For other columns, just display the price
-                Text(
-                    text = price,
-                    modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
-                )
-            }
         }
     }
 }
@@ -128,6 +77,7 @@ fun PreviewProductsCartView() {
                 productName = "ფილე ქათმის პრემიო 900 გრ",
                 ImgUrl = "https://imageproxy.wolt.com/menu/menu-images/640b0b4cc37fe02e9151b630/b1674f42-c0ea-11ee-a2c8-6add7669de06_286245.jpg",
                 productPrice = "11.95",
+                companyImg = "",
                 lastUpdated = "15",
             ),
             Product(
@@ -138,6 +88,7 @@ fun PreviewProductsCartView() {
                 ImgUrl = "https://imageproxy.wolt.com/menu/menu-images/5f6b69ba5d07dca217bd3620/f7b211b8-d705-11ee-9f7a-928a2e3fa858_186288.jpg",
                 productPrice = "7.95",
                 lastUpdated = "60",
+                companyImg = "",
             ),
             Product(
                 productID = 5,
@@ -147,6 +98,7 @@ fun PreviewProductsCartView() {
                 ImgUrl = "https://imageproxy.wolt.com/menu/menu-images/5f6b69ba5d07dca217bd3620/f7b211b8-d705-11ee-9f7a-928a2e3fa858_186288.jpg",
                 productPrice = "7.95",
                 lastUpdated = "15",
+                companyImg = "",
             )
         ),
         listOf(
@@ -158,6 +110,7 @@ fun PreviewProductsCartView() {
                 ImgUrl = "https://imageproxy.wolt.com/menu/menu-images/640b0b4cc37fe02e9151b630/b1674f42-c0ea-11ee-a2c8-6add7669de06_286245.jpg",
                 productPrice = "13.95",
                 lastUpdated = "60",
+                companyImg = "",
             ),
             Product(
                 productID = 5,
@@ -167,6 +120,7 @@ fun PreviewProductsCartView() {
                 ImgUrl = "https://imageproxy.wolt.com/menu/menu-images/5f6b69ba5d07dca217bd3620/f7b211b8-d705-11ee-9f7a-928a2e3fa858_186288.jpg",
                 productPrice = "7.95",
                 lastUpdated = "60",
+                companyImg = "",
 
             )
         ),
@@ -179,6 +133,7 @@ fun PreviewProductsCartView() {
                 ImgUrl = "https://imageproxy.wolt.com/menu/menu-images/640b0b4cc37fe02e9151b630/b1674f42-c0ea-11ee-a2c8-6add7669de06_286245.jpg",
                 productPrice = "11.95",
                 lastUpdated = "15",
+                companyImg = "",
             ),
             Product(
                 productID = 5,
@@ -188,6 +143,7 @@ fun PreviewProductsCartView() {
                 ImgUrl = "https://imageproxy.wolt.com/menu/menu-images/5f6b69ba5d07dca217bd3620/f7b211b8-d705-11ee-9f7a-928a2e3fa858_186288.jpg",
                 productPrice = "7.95",
                 lastUpdated = "15",
+                companyImg = "",
             )
         )
     )

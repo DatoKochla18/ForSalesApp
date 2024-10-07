@@ -10,13 +10,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.rememberNavController
 import com.loc.forsales.presentation.navgraph.NavGraph
 import com.loc.forsales.presentation.Home.HomeScreen
 import com.loc.forsales.ui.theme.ForSalesTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-
 class MainActivity : ComponentActivity() {
     private val viewModel by viewModels<MainViewModel>()
 
@@ -24,17 +24,19 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ForSalesTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Box(modifier = Modifier.background(MaterialTheme.colorScheme.background).fillMaxSize()) {
-                        NavGraph(startDestination = viewModel.startDestination.value)
+                    // Create NavHostController and pass it to NavGraph
+                    val navController = rememberNavController()
+
+                    NavGraph(
+                        navController = navController, // Pass NavController here
+                        startDestination = viewModel.startDestination.value // Ensure correct start destination
+                    )
                 }
             }
         }
     }
 }
-}
-

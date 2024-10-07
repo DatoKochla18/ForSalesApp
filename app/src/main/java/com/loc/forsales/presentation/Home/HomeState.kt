@@ -9,7 +9,7 @@ data class HomeState(
     val selectedCategory: String = "All",
     val isLoading: Boolean = true,
     val error: String? = null,
-    val query: String = "" // Add this line
+    val query: String = "", // Add this line
 ) {
     val visibleProducts: List<Product>
         get() = if (selectedCategory == "All") {

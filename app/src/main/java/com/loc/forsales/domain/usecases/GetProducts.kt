@@ -8,7 +8,7 @@ import javax.inject.Inject
 class GetProducts @Inject constructor(
     private val productsRepository: ProductsRepository
 ) {
-    operator fun invoke(): Flow<List<Product>> {
-        return productsRepository.getProducts()
+    operator fun invoke(mainCategoryId: Int, page: Int, pageSize: Int): Flow<List<Product>> {
+        return productsRepository.getProducts(mainCategoryId, page, pageSize)
     }
 }

@@ -98,6 +98,7 @@ fun DetailScreenPreview() {
                     productName = "კუჭი ქათმის ქუალიკო 1 კგ",
                     productPrice = "7.95",
                     lastUpdated = "60",
+                    companyImg = "1",
                     ImgUrl = "https://imageproxy.wolt.com/menu/menu-images/5f6b69ba5d07dca217bd3620/2383c440-f7e4-11ee-8413-cec83d668e87_289623.jpg"
                 ),
                 Product(
@@ -107,6 +108,7 @@ fun DetailScreenPreview() {
                     productName = "კუჭი ქათმის ქუალიკო 1 კგ",
                     productPrice = "8.45",
                     lastUpdated = "15",
+                    companyImg = "1",
                     ImgUrl = "https://imageproxy.wolt.com/menu/menu-images/5f6b69ba5d07dca217bd3620/2383c440-f7e4-11ee-8413-cec83d668e87_289623.jpg"
                 )
             )

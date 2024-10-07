@@ -12,34 +12,50 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.loc.forsales.domain.model.Product
+import com.loc.forsales.presentation.Entry.EntryScreen
 import com.loc.forsales.presentation.Home.HomeScreen
+import com.loc.forsales.presentation.cart.ProductCartScreen
+import com.loc.forsales.presentation.cart.ProductCartViewModel
 import com.loc.forsales.presentation.detail.DetailScreen
 import com.loc.forsales.presentation.detail.DetailsViewModel
-import com.loc.forsales.presentation.news_navigator.NewsNavigator
 
 @Composable
 fun NavGraph(
-    startDestination: String = Route.HomeScreen.route
+    navController: NavHostController,
+    startDestination: String = Route.EntryScreen.route
 ) {
-    val navController = rememberNavController() // Initialize NavController
-
     NavHost(
         navController = navController,
         startDestination = startDestination
     ) {
-        composable(route = Route.HomeScreen.route) {
-            // Use `rememberSaveable` to preserve HomeScreen state across navigation
+        composable(route = Route.EntryScreen.route) {
+            EntryScreen(
+                onCategorySelected = { categoryId ->
+                    navController.navigate("${Route.HomeScreen.route}/$categoryId")
+                }
+            )
+        }
+
+        composable(
+            route = "${Route.HomeScreen.route}/{categoryId}",
+            arguments = listOf(navArgument("categoryId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val categoryId = backStackEntry.arguments?.getInt("categoryId") ?: -1
             HomeScreen(
+                categoryId = categoryId,
                 navigateToDetails = { product ->
-                    navigateToDetails(
-                        navController = navController,
-                        product = product
-                    )
+                    navigateToDetails(navController, product)
+                },
+                navigateToCart = { cartIds ->
+                    navController.navigate("${Route.CartScreen.route}/$categoryId/$cartIds")
                 }
             )
         }
@@ -69,8 +85,29 @@ fun NavGraph(
                 products = state.products,
             )
         }
+        composable(
+            route = "${Route.CartScreen.route}/{categoryId}/{cartIds}",
+            arguments = listOf(
+                navArgument("categoryId") { type = NavType.IntType },
+                navArgument("cartIds") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val categoryId = backStackEntry.arguments?.getInt("categoryId") ?: -1
+            val cartIds = backStackEntry.arguments?.getString("cartIds") ?: ""
+            val viewModel: ProductCartViewModel = hiltViewModel()
+
+            LaunchedEffect(categoryId, cartIds) {
+                viewModel.searchProductCart( cartIds,categoryId)
+            }
+
+            ProductCartScreen(
+                viewModel = viewModel,
+
+            )
+        }
     }
-}
+    }
+
 
 // Helper function to navigate to the details screen
 private fun navigateToDetails(navController: NavController, product: Product) {

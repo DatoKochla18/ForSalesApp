@@ -12,7 +12,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor() : ViewModel() {
 
     // Using MutableState to track the start destination
-    private val _startDestination = mutableStateOf(Route.HomeScreen.route)
+    private val _startDestination = mutableStateOf(Route.EntryScreen.route)
     val startDestination: State<String> = _startDestination
 
     init {
