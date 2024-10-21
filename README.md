@@ -2,7 +2,9 @@
 
 ForSalesApp is an Android application that helps users compare grocery prices from different markets and find the best deals for their shopping. The app provides real-time price comparisons, allowing users to make informed purchasing decisions.
 
-![App Entry]([screenshots/app_entry.jpg](https://media.licdn.com/dms/image/v2/D4E2DAQHSuO6WgK8XgA/profile-treasury-image-shrink_1920_1920/profile-treasury-image-shrink_1920_1920/0/1728305164575?e=1730145600&v=beta&t=neUwvlXHsSGG4MGtIogaaJh2EWlpc4bZDRxHonDQrR0))
+
+![App Entry](screenshots/app_entry.jpg)
+
 
 ## Features
 
