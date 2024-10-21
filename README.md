@@ -17,13 +17,14 @@ ForSalesApp is an Android application that helps users compare grocery prices fr
 ## Screenshots
 
 ### Home Screen
-![Home Screen](ScreenShots/Home.png)
+<img src="ScreenShots/Home.png" alt="Home" width="300" height="800"/>
 
 ### Product Detail Screen
-![Detail Screen](ScreenShots/Detail.png)
+<img src="ScreenShots/Detail.png" alt="Detail" width="300" height="800"/>
 
 ### Product Cart
 ![Product Cart](ScreenShots/Cart.png)
+<img src="ScreenShots/Cart.png" alt="Cart" width="300" height="800"/>
 
 ## Technologies Used
 
